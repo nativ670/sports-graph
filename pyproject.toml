@@ -7,7 +7,10 @@ authors = [
     { name = "Nativ Ovadia", email = "nativ6701559@gmail.com" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pandas>=3.0.6",
+    "pandera>=0.33.1",
+]
 
 [build-system]
 requires = ["uv_build>=0.12.17,<0.13.0"]
