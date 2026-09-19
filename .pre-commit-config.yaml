@@ -1,13 +1,17 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.8   # placeholder; run `pre-commit autoupdate`
+    rev: v0.16.8
     hooks:
       - id: ruff-check   # older versions call this `ruff`
       - id: ruff-format
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0   # placeholder; run `pre-commit autoupdate`
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
         args: ["--maxkb=500"]
       - id: end-of-file-fixer
       - id: trailing-whitespace
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.38.0
+    hooks:
+      - id: check-github-workflows
