@@ -22,10 +22,7 @@ def test_game_1_exact_urls():
     files = game_files(1)
     base = "https://raw.githubusercontent.com/metrica-sports/sample-data/master/data/Sample_Game_1"
 
-    assert (
-        files["Sample_Game_1_RawEventsData.csv"]
-        == f"{base}/Sample_Game_1_RawEventsData.csv"
-    )
+    assert files["Sample_Game_1_RawEventsData.csv"] == f"{base}/Sample_Game_1_RawEventsData.csv"
     assert (
         files["Sample_Game_1_RawTrackingData_Away_Team.csv"]
         == f"{base}/Sample_Game_1_RawTrackingData_Away_Team.csv"
@@ -49,10 +46,7 @@ def test_game_2_names_and_substitution():
 
     # Assert that game 2 substitutes its number
     base = "https://raw.githubusercontent.com/metrica-sports/sample-data/master/data/Sample_Game_2"
-    assert (
-        files["Sample_Game_2_RawEventsData.csv"]
-        == f"{base}/Sample_Game_2_RawEventsData.csv"
-    )
+    assert files["Sample_Game_2_RawEventsData.csv"] == f"{base}/Sample_Game_2_RawEventsData.csv"
     assert (
         files["Sample_Game_2_RawTrackingData_Away_Team.csv"]
         == f"{base}/Sample_Game_2_RawTrackingData_Away_Team.csv"

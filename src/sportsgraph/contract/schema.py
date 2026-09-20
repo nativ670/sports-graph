@@ -41,9 +41,7 @@ def validate_players(df: pd.DataFrame, meta: MatchMeta) -> pd.DataFrame:
 
     schema = DataFrameSchema(
         {
-            "frame": Column(
-                int, checks=[Check(lambda s: s >= 0, name="negative")], nullable=False
-            ),
+            "frame": Column(int, checks=[Check(lambda s: s >= 0, name="negative")], nullable=False),
             "track_id": Column(int, nullable=False),
             "team": Column(
                 str,
@@ -67,9 +65,7 @@ def validate_players(df: pd.DataFrame, meta: MatchMeta) -> pd.DataFrame:
                 name="duplicate",
             ),
             Check(
-                lambda df: (
-                    df.groupby(["frame", "team"])["frame"].transform("size") <= 11
-                ),
+                lambda df: df.groupby(["frame", "team"])["frame"].transform("size") <= 11,
                 name="more than 11",
             ),
         ],
@@ -85,9 +81,7 @@ def validate_ball(df: pd.DataFrame, meta: MatchMeta) -> pd.DataFrame:
 
     schema = DataFrameSchema(
         {
-            "frame": Column(
-                int, checks=[Check(lambda s: s >= 0, name="negative")], nullable=False
-            ),
+            "frame": Column(int, checks=[Check(lambda s: s >= 0, name="negative")], nullable=False),
             "x_m": Column(
                 float,
                 checks=[Check(lambda s: s.abs() <= max_x, name="bounds")],
