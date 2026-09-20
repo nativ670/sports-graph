@@ -4,7 +4,7 @@ Sports Graph detects and tracks players, builds a live player network, visualize
 
 ## Project Status
 
-**Current Phase (Phase 0):** Tooling and CI are established. Core modules (detection, tracking, and analytics) are currently in the planning phase.
+**Current Phase:** Phase 0 complete. Phase 1 (analytics on open tracking data) is in progress: the tracking-table contract and the data download script exist. The adapter, graph builder and metrics are planned.
 
 ## Architecture
 
@@ -44,6 +44,23 @@ cd sports-graph
 uv sync
 uv run pytest
 ```
+
+## Data
+
+This project uses the open sample tracking and event data published by
+[Metrica Sports](https://github.com/metrica-sports/sample-data). The data is
+anonymized (no player, team or competition names), and coordinates run from 0 to 1
+on a 105 x 68 m pitch. Thanks to Metrica Sports for making it available.
+
+The data is not included in this repository. Download it with:
+
+```bash
+uv run python -m sportsgraph.adapters.metrica_download --game 1
+```
+
+Files are saved to `data/raw/metrica/`, which is git-ignored. Games 1 and 2 (the CSV
+format) are supported. Please use the data responsibly and acknowledge the source in
+anything you publish.
 
 ## Development
 
