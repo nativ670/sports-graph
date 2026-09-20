@@ -126,9 +126,7 @@ class TestValidPlayers:
         rows = [(0, i, "home", float(i), 0.0) for i in range(1, 12)]
         validate_players(make_players(rows), META)
 
-    @pytest.mark.parametrize(
-        "x, y", [(MAX_X, 0.0), (-MAX_X, 0.0), (0.0, MAX_Y), (0.0, -MAX_Y)]
-    )
+    @pytest.mark.parametrize("x, y", [(MAX_X, 0.0), (-MAX_X, 0.0), (0.0, MAX_Y), (0.0, -MAX_Y)])
     def test_position_exactly_at_the_margin_is_allowed(self, x, y):
         df = valid_players()
         df.loc[0, ["x_m", "y_m"]] = [x, y]
@@ -152,9 +150,7 @@ INVALID_PLAYERS = {
     "team_wrong_case": (lambda: with_value(valid_players(), 0, "team", "Home"), "team"),
     "negative_frame": (lambda: with_value(valid_players(), 0, "frame", -1), "negative"),
     "duplicate_frame_and_track_id": (
-        lambda: pd.concat(
-            [valid_players(), valid_players().iloc[[0]]], ignore_index=True
-        ),
+        lambda: pd.concat([valid_players(), valid_players().iloc[[0]]], ignore_index=True),
         "duplicate",
     ),
     "x_beyond_margin": (
@@ -193,9 +189,7 @@ INVALID_PLAYERS = {
 }
 
 
-@pytest.mark.parametrize(
-    "build, reason", list(INVALID_PLAYERS.values()), ids=list(INVALID_PLAYERS)
-)
+@pytest.mark.parametrize("build, reason", list(INVALID_PLAYERS.values()), ids=list(INVALID_PLAYERS))
 def test_invalid_players_are_rejected_for_the_right_reason(build, reason):
     with pytest.raises(ContractError, match=KEYWORDS[reason]):
         validate_players(build(), META)
@@ -226,9 +220,7 @@ class TestValidBall:
     def test_empty_table_with_correct_columns_is_valid(self):
         assert len(validate_ball(valid_ball().iloc[0:0], META)) == 0
 
-    @pytest.mark.parametrize(
-        "x, y", [(MAX_X, 0.0), (-MAX_X, 0.0), (0.0, MAX_Y), (0.0, -MAX_Y)]
-    )
+    @pytest.mark.parametrize("x, y", [(MAX_X, 0.0), (-MAX_X, 0.0), (0.0, MAX_Y), (0.0, -MAX_Y)])
     def test_position_exactly_at_the_margin_is_allowed(self, x, y):
         df = valid_ball()
         df.loc[0, ["x_m", "y_m"]] = [x, y]
@@ -262,9 +254,7 @@ INVALID_BALL = {
 }
 
 
-@pytest.mark.parametrize(
-    "build, reason", list(INVALID_BALL.values()), ids=list(INVALID_BALL)
-)
+@pytest.mark.parametrize("build, reason", list(INVALID_BALL.values()), ids=list(INVALID_BALL))
 def test_invalid_ball_is_rejected_for_the_right_reason(build, reason):
     with pytest.raises(ContractError, match=KEYWORDS[reason]):
         validate_ball(build(), META)
