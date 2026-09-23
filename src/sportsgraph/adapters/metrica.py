@@ -72,3 +72,12 @@ def load_metrica_tracking(filepath: Path | str, team: str) -> pd.DataFrame:
     meta = MatchMeta(fps=25.0, pitch_length_m=METRICA_LENGTH, pitch_width_m=METRICA_WIDTH)
 
     return validate_players(final_df, meta)
+
+
+def load_metrica_match(home_path: Path | str, away_path: Path | str) -> pd.DataFrame:
+    """Load both teams' tracking files and return one validated players table."""
+    meta = MatchMeta(fps=25.0, pitch_length_m=METRICA_LENGTH, pitch_width_m=METRICA_WIDTH)
+    home_df = load_metrica_tracking(home_path, team="home")
+    away_df = load_metrica_tracking(away_path, team="away")
+    combined_df = pd.concat([home_df, away_df], ignore_index=True)
+    return validate_players(combined_df, meta)
