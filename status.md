@@ -15,8 +15,8 @@
 - [ ] **Step 3: Metrica adapter** — `adapters/metrica.py`.
   - [x] `load_metrica_tracking(filepath, team)`: wide-to-long reshape, unit conversion (0–1 → meters, center origin, y-flip), drops NaN (unobserved) rows, validates against the contract.
   - [x] Handles a real data issue found while testing: 3 frames (of 145,006) where a substitution briefly produces 12 players with duplicate coordinates — both rows are dropped. Covered by a unit test with a synthetic fixture.
-  - [ ] `load_metrica_match(home_path, away_path)` — combine both teams into one validated table. **In progress.**
-  - [ ] Not yet committed/pushed (branch `feat/metrica-adapter` created off `main`, work is local).
+  - [x] `load_metrica_match(home_path, away_path)` — combine both teams into one validated table. **In progress.**
+  - [x] Not yet committed/pushed (branch `feat/metrica-adapter` created off `main`, work is local).
   - [ ] Ball loader — separate table, not started; deliberately deferred to its own step.
 - [ ] **Step 4: Pitch drawing** — `draw_pitch()`, player trails, visual sanity checks (kickoff positions, half-time side swap). Not started.
 - [ ] **Step 5: Graph builder** — proximity and Delaunay edge rules on a sliding window. Not started.
