@@ -62,6 +62,12 @@ Files are saved to `data/raw/metrica/`, which is git-ignored. Games 1 and 2 (the
 format) are supported. Please use the data responsibly and acknowledge the source in
 anything you publish.
 
+### Visual Proof: Coordinate Mapping
+
+To verify that the tracking data is parsed and mapped correctly to our coordinate contract (origin at center, correct dimensions), here is a visualization of the pitch at the start of both halves:
+
+![Coordinate Mapping Proof](docs/kickoff_check.png)
+
 ## Development
 
 ```bash
