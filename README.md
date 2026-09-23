@@ -4,7 +4,7 @@ Sports Graph detects and tracks players, builds a live player network, visualize
 
 ## Project Status
 
-**Current Phase:** Phase 0 complete. Phase 1 (analytics on open tracking data) is in progress: the tracking-table contract and the data download script exist. The adapter, graph builder and metrics are planned.
+**Current Phase:** Phase 0 complete. Phase 1 (analytics on open tracking data) in progress: the tracking-table contract, the Metrica data adapter, pitch drawing, and a player network graph builder (Delaunay and radius-based edge rules) are done. Metrics and baseline comparisons are next.
 
 ## Architecture
 
@@ -29,6 +29,12 @@ flowchart LR
 - **Data Contract:** Communication occurs exclusively through the central tracking table (`frame`, `track_id`, `team`, `x_m`, `y_m`).
 - **Hardware Allocation:** The Vision layer is optimized for GPU, while the Analytics layer utilizes the CPU.
 - **Modularity:** The Analytics layer can be developed and tested using pre-labeled tracking data before the detector is functional. Additionally, the detector can be swapped without modifying the Analytics logic.
+
+## Example: player network
+
+Two ways of turning one frame of tracking data into a graph: a Delaunay triangulation, which always produces a connected mesh, versus a fixed-radius graph, which can leave a player with no edges at all if their nearest teammate is just outside the radius (here, the goalkeeper at 15m).
+
+![Delaunay vs radius graph comparison](docs/graph_comparison.png)
 
 ## Getting Started
 
@@ -75,6 +81,13 @@ uv run pre-commit install
 uv run ruff check .
 uv run ruff format .
 uv run pytest
+```
+
+Reproduce the graph comparison above (after downloading the Metrica data, see
+Data above):
+
+```bash
+uv run python scripts/compare_graphs.py
 ```
 
 ### Pull Request Workflow
