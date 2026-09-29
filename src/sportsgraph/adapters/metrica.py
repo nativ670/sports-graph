@@ -9,7 +9,13 @@ METRICA_LENGTH = 105.0
 METRICA_WIDTH = 68.0
 
 
-def load_metrica_tracking(filepath: Path | str, team: str) -> pd.DataFrame:
+def _derive_period_boundaries(df: pd.DataFrame) -> tuple[int, ...]:
+    return tuple(int(f) for f in df.groupby("Period")["Frame"].first().iloc[1:].tolist())
+
+
+def load_metrica_tracking(
+    filepath: Path | str, team: str, meta: MatchMeta | None = None
+) -> pd.DataFrame:
     """
     Load Metrica tracking CSV and convert it to the standardized long format.
 
@@ -19,6 +25,15 @@ def load_metrica_tracking(filepath: Path | str, team: str) -> pd.DataFrame:
     """
     # Header is at row index 2
     df = pd.read_csv(filepath, header=2)
+
+    if meta is None:
+        boundaries = _derive_period_boundaries(df)
+        meta = MatchMeta(
+            fps=25.0,
+            pitch_length_m=METRICA_LENGTH,
+            pitch_width_m=METRICA_WIDTH,
+            period_boundary_frames=boundaries,
+        )
 
     new_cols = []
     current_player = None
@@ -65,19 +80,22 @@ def load_metrica_tracking(filepath: Path | str, team: str) -> pd.DataFrame:
     # for a single frame, resulting in 12 players. We drop both duplicate rows at that frame.
     final_df = final_df.drop_duplicates(subset=["frame", "team", "x_m", "y_m"], keep=False)
 
-    # Final sort
     final_df = final_df.sort_values(["frame", "track_id"]).reset_index(drop=True)
-
-    # Metrica sample data is 25 fps
-    meta = MatchMeta(fps=25.0, pitch_length_m=METRICA_LENGTH, pitch_width_m=METRICA_WIDTH)
-
     return validate_players(final_df, meta)
 
 
 def load_metrica_match(home_path: Path | str, away_path: Path | str) -> pd.DataFrame:
     """Load both teams' tracking files and return one validated players table."""
-    meta = MatchMeta(fps=25.0, pitch_length_m=METRICA_LENGTH, pitch_width_m=METRICA_WIDTH)
-    home_df = load_metrica_tracking(home_path, team="home")
-    away_df = load_metrica_tracking(away_path, team="away")
+    raw_home = pd.read_csv(home_path, header=2, usecols=["Period", "Frame"])
+    boundaries = _derive_period_boundaries(raw_home)
+    meta = MatchMeta(
+        fps=25.0,
+        pitch_length_m=METRICA_LENGTH,
+        pitch_width_m=METRICA_WIDTH,
+        period_boundary_frames=boundaries,
+    )
+
+    home_df = load_metrica_tracking(home_path, team="home", meta=meta)
+    away_df = load_metrica_tracking(away_path, team="away", meta=meta)
     combined_df = pd.concat([home_df, away_df], ignore_index=True)
     return validate_players(combined_df, meta)
