@@ -1,8 +1,13 @@
 from pathlib import Path
 
+import pandas as pd
 import pytest
 
-from sportsgraph.adapters.metrica import load_metrica_match, load_metrica_tracking
+from sportsgraph.adapters.metrica import (
+    _derive_period_boundaries,
+    load_metrica_match,
+    load_metrica_tracking,
+)
 from sportsgraph.contract.errors import ContractError
 
 
@@ -49,3 +54,15 @@ Period,Frame,Time [s],Player1,,Ball,
 
     with pytest.raises(ContractError, match="(?i)duplicate"):
         load_metrica_match(home_file, away_file)
+
+
+def test_derive_period_boundaries():
+    """
+    Test that the helper correctly parses the first frame of Period 2
+    as a period boundary.
+    """
+    data = {"Period": [1, 1, 2, 2], "Frame": [1, 2, 500, 501]}
+    df = pd.DataFrame(data)
+
+    boundaries = _derive_period_boundaries(df)
+    assert boundaries == (500,)

@@ -6,3 +6,4 @@ class MatchMeta:
     fps: float
     pitch_length_m: float
     pitch_width_m: float
+    period_boundary_frames: tuple[int, ...] = ()
