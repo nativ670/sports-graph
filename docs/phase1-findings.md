@@ -41,6 +41,7 @@ the same moment. Rare (10 frames total) and self-correcting; noted here rather
 than specially handled.
 
 ## Visuals
+![Kickoff for first and second halves](kickoff_check.png)
 
 ![Delaunay vs radius graph comparison](graph_comparison.png)
 
@@ -48,10 +49,6 @@ Two ways of turning one frame of tracking data into a graph. Delaunay always
 produces a connected mesh; a fixed-radius graph (15m) can leave a player
 isolated if their nearest teammate is just outside the radius, here, the
 goalkeeper.
-
-*(If a kickoff/pitch image was saved from Step 4, add it above this one, with
-a sentence noting the kickoff formation and the half-time side-swap sanity
-check.)*
 
 ## Graph metrics vs. a null model
 
