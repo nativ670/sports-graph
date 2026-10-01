@@ -41,6 +41,8 @@ the same moment. Rare (10 frames total) and self-correcting; noted here rather
 than specially handled.
 
 ## Visuals
+![Kickoff for first and second halves](kickoff_check.png)
+
 
 ![Delaunay vs radius graph comparison](graph_comparison.png)
 
