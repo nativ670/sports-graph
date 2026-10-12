@@ -15,26 +15,45 @@ from sportsgraph.detection.yolo_labels import load_class_names
 def prepare_training_manifest(dataset_dir: Path, held_out_frac: float = 0.2) -> Path:
     """Prepare train.txt, val.txt, and a dataset YAML manifest for YOLO training.
 
-    Ensures the split strictly follows our deterministic time_based_split so that
-    evaluation on val matches our held-out test set exactly.
+    If native Roboflow split subdirectories exist (train/images and valid/images),
+    they are used directly to guarantee clean, zero-leakage training.
+    Otherwise (e.g. flat CVAT video export), uses our deterministic time_based_split.
     """
     dataset_dir = dataset_dir.resolve()
-    images_dir = dataset_dir / "images"
     classes_file = dataset_dir / "classes.txt"
 
-    if not images_dir.exists():
-        raise FileNotFoundError(f"Images directory not found: {images_dir}")
     if not classes_file.exists():
         raise FileNotFoundError(f"Classes file not found: {classes_file}")
 
     class_names_dict = load_class_names(classes_file)
     class_names = [class_names_dict[i] for i in range(len(class_names_dict))]
 
-    image_paths = sorted(images_dir.glob("*.jpg")) + sorted(images_dir.glob("*.png"))
-    if not image_paths:
-        raise ValueError(f"No images found in {images_dir}")
+    train_split_dir = dataset_dir / "train" / "images"
+    valid_split_dir = dataset_dir / "valid" / "images"
 
-    working_paths, held_out_paths = time_based_split(image_paths, held_out_frac=held_out_frac)
+    if train_split_dir.exists() and valid_split_dir.exists():
+        working_paths = sorted(train_split_dir.glob("*.jpg")) + sorted(
+            train_split_dir.glob("*.png")
+        )
+        held_out_paths = sorted(valid_split_dir.glob("*.jpg")) + sorted(
+            valid_split_dir.glob("*.png")
+        )
+        if not working_paths:
+            raise ValueError(f"No training images found in {train_split_dir}")
+        if not held_out_paths:
+            raise ValueError(f"No validation images found in {valid_split_dir}")
+    else:
+        images_dir = dataset_dir / "images"
+        if not images_dir.exists():
+            msg = (
+                f"Neither split directories (train/valid) nor flat images "
+                f"directory found in {dataset_dir}"
+            )
+            raise FileNotFoundError(msg)
+        image_paths = sorted(images_dir.glob("*.jpg")) + sorted(images_dir.glob("*.png"))
+        if not image_paths:
+            raise ValueError(f"No images found in {images_dir}")
+        working_paths, held_out_paths = time_based_split(image_paths, held_out_frac=held_out_frac)
 
     train_txt = dataset_dir / "train.txt"
     val_txt = dataset_dir / "val.txt"
@@ -49,6 +68,14 @@ def prepare_training_manifest(dataset_dir: Path, held_out_frac: float = 0.2) -> 
         "nc": len(class_names),
         "names": class_names,
     }
+
+    test_split_dir = dataset_dir / "test" / "images"
+    if test_split_dir.exists():
+        test_paths = sorted(test_split_dir.glob("*.jpg")) + sorted(test_split_dir.glob("*.png"))
+        if test_paths:
+            test_txt = dataset_dir / "test.txt"
+            test_txt.write_text("\n".join(str(p.resolve().as_posix()) for p in test_paths) + "\n")
+            manifest["test"] = "test.txt"
 
     manifest_path = dataset_dir / "dataset.yaml"
     with open(manifest_path, "w") as f:
