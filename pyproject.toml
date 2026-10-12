@@ -5,11 +5,13 @@ description = "Real-time soccer player tracking, live player networks and tactic
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "huggingface-hub>=2.1.1",
     "matplotlib>=3.11.2",
     "networkx>=3.7",
     "pandas>=3.0.6",
     "pandera>=0.33.1",
     "scipy>=1.18.1",
+    "ultralytics>=8.4.175",
 ]
 
 [build-system]
@@ -30,6 +32,7 @@ addopts = "-m 'not network'"
 
 [tool.ruff]
 line-length = 100
+exclude = ["cvat"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
