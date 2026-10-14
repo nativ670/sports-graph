@@ -101,7 +101,7 @@ For detailed project guidelines, refer to [AGENTS.md](AGENTS.md). (`CLAUDE.md` a
 ## Roadmap
 
 - [x] **Phase 0: Tooling** - Setup repository, uv, ruff, pytest, pre-commit, CI, and agent instructions.
-- [ ] **Phase 1: Analytics** - Load open tracking data, apply Pandera validation, build graphs, and draw pitch trails. *Definition of Done (DoD): Metrics compute on a match and baselines indicate meaningful results.*
+- [x] **Phase 1: Analytics** - Load open tracking data, apply Pandera validation, build graphs, and draw pitch trails. *Definition of Done (DoD): Metrics compute on a match and baselines indicate meaningful results.*
 - [ ] **Phase 2: Detection** - Implement pretrained detector, fine-tune, and evaluate on a match-level split. *DoD: mAP is reported per camera, and failure cases are catalogued.*
 - [ ] **Phase 3: Tracking and Homography** - Implement ByteTrack-style tracking, team assignment, and pitch keypoints to output the tracking table. *DoD: Output table metrics generally match open data on similar footage.*
 - [ ] **Phase 4: Streaming** - Replay-as-stream functionality, establish a latency budget per stage, and build a live dashboard (Streamlit or Matplotlib). *DoD: Ability to measure "stage X costs N ms per frame".*

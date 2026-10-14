@@ -90,7 +90,7 @@ def prepare_training_manifest(dataset_dir: Path, held_out_frac: float = 0.2) -> 
 
 def train_model(
     dataset_yaml: Path,
-    model_name: str = "yolov8n.pt",
+    model_name: str = "yolo11n.pt",
     epochs: int = 50,
     imgsz: int = 1280,
     batch: int = 8,
@@ -140,7 +140,7 @@ def main() -> None:
     parser.add_argument(
         "--model",
         type=str,
-        default="yolov8n.pt",
+        default="yolo11n.pt",
         help="Base model checkpoint for transfer learning",
     )
     parser.add_argument("--epochs", type=int, default=50, help="Number of training epochs")

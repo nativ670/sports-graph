@@ -51,7 +51,7 @@ def main() -> None:
     parser.add_argument("--images-dir", type=Path, required=True)
     parser.add_argument("--output-labels-dir", type=Path, required=True)
     parser.add_argument("--classes-file", type=Path, required=True)
-    parser.add_argument("--model", default="yolov8n.pt")
+    parser.add_argument("--model", default="yolo11n.pt")
     parser.add_argument("--conf", type=float, default=0.25)
     args = parser.parse_args()
 
