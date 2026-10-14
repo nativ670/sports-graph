@@ -12,7 +12,7 @@ Usage (once you have a real export):
         --images-dir data/raw/warmup_labeled/images \
         --labels-dir data/raw/warmup_labeled/labels \
         --classes-file data/raw/warmup_labeled/classes.txt \
-        --model yolov8n.pt
+        --model yolo11n.pt
 """
 
 import argparse
@@ -87,7 +87,7 @@ def main() -> None:
         default=None,
         help="Evaluate a specific native Roboflow split directory (train, valid, or test).",
     )
-    parser.add_argument("--model", default="yolov8n.pt")
+    parser.add_argument("--model", default="yolo11n.pt")
     parser.add_argument("--iou-threshold", type=float, default=0.5)
     parser.add_argument("--held-out-frac", type=float, default=0.2)
     parser.add_argument(

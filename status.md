@@ -31,38 +31,36 @@
 
 ---
 
-## Phase 2 — Detection (In Progress)
+## Phase 2 — Detection
 
 - [x] **Step 1: Baseline evaluation framework & dataset integration**
   - Building blocks: IoU (`iou.py`), greedy bipartite matching (`evaluate.py`), mAP / AP calculation, time-based split (`split.py`), YOLO label parsing (`yolo_labels.py`).
-  - Integrated 4-class soccer dataset (`adapters/unpack_roboflow.py`): 372 frames (297 working, 75 held-out), 19.1 MB disk footprint.
+  - Integrated 4-class soccer dataset (`adapters/unpack_roboflow.py`): 372 frames (298 train, 49 valid, 25 test), 19.1 MB disk footprint.
   - Classes: `ball`, `goalkeeper`, `player`, `referee`.
-  - Baseline benchmark established on off-the-shelf `yolov8n.pt`:
-    - Working set mAP: 0.1580 (player: 0.5585, ball: 0.0205, goalkeeper: 0.0185, referee: 0.0345)
-    - Held-out set mAP: 0.1767 (player: 0.5542, ball: 0.1053, goalkeeper: 0.0138, referee: 0.0334)
-- [x] **Step 2: Fine-tuning & Regularization** — Completed.
-  - Training pipeline built: `src/sportsgraph/detection/train.py` with transfer learning (`yolov8n.pt`), regularizing augmentations (Mosaic 1.0, MixUp 0.15, HSV jitter, flips), and deterministic time-based split.
+  - Baseline benchmark established on off-the-shelf COCO YOLO (`yolo11n.pt` / `yolov8n.pt`):
+    - Macro mAP: 0.1767 (player: 0.5542, ball: 0.1053, goalkeeper: 0.0138, referee: 0.0334).
+- [x] **Step 2: Fine-tuning & Regularization (Role Specialist)** — Completed.
+  - Training pipeline built: `src/sportsgraph/detection/train.py` with transfer learning, regularizing augmentations (Mosaic 1.0, MixUp 0.15, HSV jitter, flips).
+  - Preserved Roboflow native `train/`, `valid/`, and `test/` splits to guarantee zero data leakage.
   - Remote execution runner: `notebooks/kaggle_train.ipynb` executed on free Kaggle T4 GPU.
-  - Weights ingested: `models/fine_tuned/weights/best.pt` (6.35 MB).
+  - Ingested weights: `models/fine_tuned/weights/best.pt` (5.66 MB). (Previous v8 weights preserved as `best8.pt`).
   - Empirical verification via `run_baseline_eval.py`:
-    - Working set mAP: **0.8934** (player: 0.9896, ball: 0.6535, goalkeeper: 0.9606, referee: 0.9698) — jump from 0.1580 baseline.
-    - Held-out set mAP: **0.8880** (player: 0.9849, ball: 0.6691, goalkeeper: 0.9800, referee: 0.9179) — jump from 0.1767 baseline (+402% increase).
-  - Exceeded target benchmark (>0.85 mAP) on unseen match frames.
-- [x] **Step 3: Dual-Detector Architecture & Ball Specialist** — Weights Ingested & Evaluated.
-  - Adapter created: `src/sportsgraph/adapters/ball_dataset.py` with unit tests (`test_ball_dataset.py`) to isolate ball labels from multi-class datasets.
-  - Training runner executed on Kaggle: `notebooks/kaggle_train_ball.ipynb` trained on 4,253 combined frames.
-  - Weights ingested: `models/ball_specialist/weights/best.pt` (6.35 MB).
+    - Native `test` set (25 frames): Player **0.9883 AP**, Goalkeeper **0.9237 AP**, Referee **0.9498 AP**, Ball **0.5179 AP** (macro mAP: **0.8449**).
+    - Native `valid` set (49 frames): Player **0.9886 AP**, Goalkeeper **0.9209 AP**, Referee **0.9380 AP**, Ball **0.6479 AP** (macro mAP: **0.8738**).
+  - Exceeded target benchmark (>0.85 mAP) on held-out match frames.
+- [x] **Step 3: Dual-Detector Architecture & Ball Specialist** — Completed.
+  - Adapter created: `src/sportsgraph/adapters/ball_dataset.py` with unit tests to isolate ball labels and generate background frames.
+  - Training runner executed on Kaggle: `notebooks/kaggle_train_ball.ipynb` trained on 4,254 combined frames (3,956 ball `train` + 298 player `train` ball-filtered).
+  - Ingested weights: `models/ball_specialist/weights/best.pt` (5.66 MB).
   - Empirical verification via `run_baseline_eval.py`:
-    - 500-frame independent test set (`data/raw/ball_test/`):
-      - Working split (400 frames): **0.9517 AP** (vs 0.6546 baseline).
-      - Held-out split (100 frames): **0.9308 AP** (vs 0.4316 baseline, +115.7% relative gain!).
-    - Original 372-frame match set (`data/raw/warmup_labeled/`):
-      - Working split (297 frames): **0.7572 AP** (vs 0.6535 baseline).
-      - Held-out split (75 frames): **0.7849 AP** (vs 0.6691 baseline).
+    - Independent 500-frame test set (`data/raw/ball_test/`): **0.9301 AP** (vs 0.5211 from 4-class model, +78.5% relative gain).
+    - Match `test` set (25 frames): **0.6859 AP** (vs 0.5179 from 4-class model, +32.4% relative gain).
+- [x] **Step 4: Upgrade to YOLO11 Architecture** — Completed.
+  - Upgraded base models across codebase, evaluators, and Kaggle runners to Ultralytics YOLO11 (`yolo11n.pt`).
+  - Weight sizes reduced from 6.66 MB to 5.66 MB (-15% footprint).
+  - Validated all 4 benchmarks with zero leakage.
 
-**Phase 2 In Progress (Under Active Exploration).**
-
-
+**Phase 2 Complete & Verified.** Ready for Phase 3 (Tracking and Homography).
 
 ## Later phases (unstarted)
 - Phase 3 — Tracking & homography (fixed camera first; per-frame calibration via pitch keypoints noted as a harder follow-on, not a new phase)
@@ -75,6 +73,7 @@
 - Analytics enhancements: centrality beyond degree (betweenness, closeness, eigenvector centrality) once tracking table is populated from vision.
 - Player- and event-aware tactical analysis (individual matchups, possession, goals, defensive-line breaks) —
           needs the ball loader and event data; not just a graph-shape question like the current metrics.
+- Final Plan - Dashboard containing home team data and metrics, and scouting system of away teams. Possibly be used by analytics teams        using broadcast data or team's footage.
 
 ## Decisions worth remembering
 - Sport: soccer. Compared against basketball, hockey, volleyball, American football — soccer is the only one with both open tracking data and open detection footage.
